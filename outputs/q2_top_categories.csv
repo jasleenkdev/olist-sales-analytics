@@ -1,0 +1,11 @@
+revenue_rank,category,revenue,orders,items_sold,avg_item_price,revenue_share_pct,cumulative_share_pct
+1,health_beauty,1233131.72,8647,9465,130.28,9.33,9.33
+2,watches_gifts,1166176.98,5495,5859,199.04,8.82,18.15
+3,bed_bath_table,1023434.76,9272,10953,93.44,7.74,25.89
+4,sports_leisure,954852.55,7530,8431,113.25,7.22,33.11
+5,computers_accessories,888724.61,6530,7644,116.26,6.72,39.83
+6,furniture_decor,711927.69,6307,8160,87.25,5.38,45.22
+7,housewares,615628.69,5743,6795,90.6,4.66,49.87
+8,cool_stuff,610204.1,3559,3718,164.12,4.62,54.49
+9,auto,578966.65,3810,4140,139.85,4.38,58.87
+10,toys,471286.48,3804,4030,116.94,3.56,62.43
