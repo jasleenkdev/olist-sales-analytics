@@ -1,0 +1,2 @@
+customers,repeat_customers,repeat_rate_pct,median_days_to_second,avg_days_to_second,same_day_second_orders,median_days_to_second_excl_same_day
+93358,2801,3.0,29.0,81.2,829,75.0
