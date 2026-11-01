@@ -17,3 +17,4 @@ powerbi/**/.pbi/cache.abf
 .DS_Store
 .vscode/
 .idea/
+.cache/

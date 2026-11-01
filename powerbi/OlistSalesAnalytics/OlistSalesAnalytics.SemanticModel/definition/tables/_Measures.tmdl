@@ -1,0 +1,147 @@
+table _Measures
+	lineageTag: a0b43512-f624-5ba6-87a9-7f341ba7ee42
+
+	measure 'Total Revenue' = CALCULATE ( SUM ( fact_order_items[price] ), fact_order_items[is_delivered] = 1 )
+		formatString: \R\$ #,0
+		displayFolder: Sales
+		lineageTag: 5f241f70-1a93-50eb-bce2-d1b22e2b5f3e
+
+	measure 'Total Orders' = CALCULATE ( DISTINCTCOUNT ( fact_order_items[order_id] ), fact_order_items[is_delivered] = 1 )
+		formatString: #,0
+		displayFolder: Sales
+		lineageTag: 872ac889-af2b-56f0-be64-9c841b1326f2
+
+	measure AOV = DIVIDE ( [Total Revenue], [Total Orders] )
+		formatString: \R\$ #,0.00
+		displayFolder: Sales
+		lineageTag: 1734b7ad-7473-506f-8c7d-0589bba61159
+
+	measure 'Total Freight' = CALCULATE ( SUM ( fact_order_items[freight_value] ), fact_order_items[is_delivered] = 1 )
+		formatString: \R\$ #,0
+		displayFolder: Sales
+		lineageTag: 6e096078-3b69-5755-b03f-b731d49036a2
+
+	measure 'Revenue PY' = CALCULATE ( [Total Revenue], SAMEPERIODLASTYEAR ( dim_date[date] ) )
+		formatString: \R\$ #,0
+		displayFolder: Time Intelligence
+		lineageTag: 08f08e8e-b600-56d7-bdd5-d44187f7e4b8
+
+	measure 'Revenue YoY %' =
+			VAR _py = [Revenue PY]
+			RETURN
+			    IF ( NOT ISBLANK ( _py ), DIVIDE ( [Total Revenue] - _py, _py ) )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: e388e9ff-b1ce-5e9a-ad5f-8a92a132ecef
+
+	measure 'Revenue PM' = CALCULATE ( [Total Revenue], DATEADD ( dim_date[date], -1, MONTH ) )
+		formatString: \R\$ #,0
+		displayFolder: Time Intelligence
+		lineageTag: a0f7b83b-5949-578c-9e78-c986a0c0363f
+
+	measure 'Revenue MoM %' =
+			VAR _pm = [Revenue PM]
+			RETURN
+			    IF ( NOT ISBLANK ( _pm ), DIVIDE ( [Total Revenue] - _pm, _pm ) )
+		formatString: 0.0%
+		displayFolder: Time Intelligence
+		lineageTag: 787ff0d9-9766-5d9b-9587-5af48bd81409
+
+	measure 'Running Total Revenue' =
+			VAR _maxDate = MAX ( dim_date[date] )
+			RETURN
+			    CALCULATE ( [Total Revenue], REMOVEFILTERS ( dim_date ), dim_date[date] <= _maxDate )
+		formatString: \R\$ #,0
+		displayFolder: Time Intelligence
+		lineageTag: 58aab91e-a5fe-580b-9471-02e01140027c
+
+	measure 'Delivered Orders With Date' = CALCULATE ( COUNTROWS ( fact_orders ), NOT ISBLANK ( fact_orders[is_late] ) )
+		formatString: #,0
+		displayFolder: Delivery
+		lineageTag: a21c8ba0-3a1f-554a-850a-1e670e8b6d03
+
+	measure 'Late Orders' = CALCULATE ( COUNTROWS ( fact_orders ), fact_orders[is_late] = 1 )
+		formatString: #,0
+		displayFolder: Delivery
+		lineageTag: c0cc7aaf-16dd-5f0a-9888-1eaaa806b2b5
+
+	measure 'Late Delivery %' = DIVIDE ( [Late Orders], [Delivered Orders With Date] )
+		formatString: 0.0%
+		displayFolder: Delivery
+		lineageTag: b3c6e8d4-a10f-5fc4-87ab-1dfe6b558b10
+
+	measure 'Avg Delivery Days' = CALCULATE ( AVERAGE ( fact_orders[delivery_days] ), fact_orders[is_delivered] = 1 )
+		formatString: 0.0
+		displayFolder: Delivery
+		lineageTag: d475cf2c-4a39-5d04-b68c-eaad584c03b1
+
+	measure 'Avg Review Score' = CALCULATE ( AVERAGE ( fact_orders[review_score] ), fact_orders[is_delivered] = 1 )
+		formatString: 0.00
+		displayFolder: Reviews
+		lineageTag: 1e3d80fc-fcb9-580c-9ecb-c0e92114f062
+
+	measure 'Avg Review On Time' = CALCULATE ( [Avg Review Score], fact_orders[is_late] = 0 )
+		formatString: 0.00
+		displayFolder: Reviews
+		lineageTag: a48016d4-bb4c-56e1-a8c8-56fb1b9e3896
+
+	measure 'Avg Review Late' = CALCULATE ( [Avg Review Score], fact_orders[is_late] = 1 )
+		formatString: 0.00
+		displayFolder: Reviews
+		lineageTag: e415bc19-fc64-5836-910f-9b3a2bd2f865
+
+	measure 'Active Customers' = CALCULATE ( DISTINCTCOUNT ( fact_orders[customer_unique_id] ), fact_orders[is_delivered] = 1 )
+		formatString: #,0
+		displayFolder: Customers
+		lineageTag: b1f86b92-7406-5ecb-9c1d-1c556402a154
+
+	measure 'Repeat Customer %' =
+			VAR _customers =
+			    ADDCOLUMNS (
+			        CALCULATETABLE ( VALUES ( fact_orders[customer_unique_id] ), fact_orders[is_delivered] = 1 ),
+			        "@orders", CALCULATE ( DISTINCTCOUNT ( fact_orders[order_id] ), fact_orders[is_delivered] = 1 )
+			    )
+			RETURN
+			    DIVIDE ( COUNTROWS ( FILTER ( _customers, [@orders] >= 2 ) ), COUNTROWS ( _customers ) )
+		formatString: 0.00%
+		displayFolder: Customers
+		lineageTag: bbfb0220-1d63-51f9-bc3d-2fe865d424dc
+
+	measure 'RFM Customers' = CALCULATE ( COUNTROWS ( dim_customer ), dim_customer[rfm_segment] <> "No Delivered Order" )
+		formatString: #,0
+		displayFolder: Customers
+		lineageTag: 8b0455a0-db43-595b-af93-45222667362a
+
+	measure 'RFM Revenue' = SUM ( dim_customer[lifetime_revenue] )
+		formatString: \R\$ #,0
+		displayFolder: Customers
+		lineageTag: 824360de-7f8d-567c-ae83-7cacb8a91caf
+
+	measure 'Avg Customer Value' = DIVIDE ( [RFM Revenue], [RFM Customers] )
+		formatString: \R\$ #,0.00
+		displayFolder: Customers
+		lineageTag: 49ae7f5f-1482-5ec3-be2f-f640a5b83570
+
+	measure 'Avg Recency Days' = AVERAGE ( dim_customer[recency_days] )
+		formatString: 0
+		displayFolder: Customers
+		lineageTag: a3652dd4-c78d-50a0-b9f6-27ca50980b5b
+
+	column Placeholder
+		dataType: string
+		isHidden
+		lineageTag: 4c6ba43a-80a9-5b00-b097-43b50893f452
+		summarizeBy: none
+		sourceColumn: Placeholder
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = #table(type table [Placeholder = text], {})
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

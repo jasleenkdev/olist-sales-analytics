@@ -1,0 +1,120 @@
+table fact_order_items
+	lineageTag: 620fc7bf-2fb7-5c80-b6f6-da7d6cff1d0d
+
+	column order_id
+		dataType: string
+		lineageTag: c56ed733-435e-5f00-98b6-7448b37386ab
+		summarizeBy: none
+		sourceColumn: order_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_item_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 68721133-a1a2-5fea-ac48-203f074e7e37
+		summarizeBy: none
+		sourceColumn: order_item_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_id
+		dataType: string
+		isHidden
+		lineageTag: 9ba52d5d-2fbf-56c8-99ea-9cb33805aacd
+		summarizeBy: none
+		sourceColumn: product_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column seller_id
+		dataType: string
+		isHidden
+		lineageTag: 8ac6d801-bb49-57db-8d0c-a7d715173d9f
+		summarizeBy: none
+		sourceColumn: seller_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_unique_id
+		dataType: string
+		isHidden
+		lineageTag: bfde3123-e835-59fd-9aa3-9259f8a9ffb2
+		summarizeBy: none
+		sourceColumn: customer_unique_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column purchase_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		isHidden
+		lineageTag: 4ae1f320-8ecf-5ae3-ae4f-cea492442878
+		summarizeBy: none
+		sourceColumn: purchase_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column order_status
+		dataType: string
+		lineageTag: 10946b23-3e2b-5ccd-9b14-f60a03173f89
+		summarizeBy: none
+		sourceColumn: order_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_delivered
+		dataType: int64
+		formatString: 0
+		lineageTag: ed82a68d-bc95-5de3-b143-331dacc71431
+		summarizeBy: none
+		sourceColumn: is_delivered
+
+		annotation SummarizationSetBy = Automatic
+
+	column price
+		dataType: decimal
+		formatString: \R\$ #,0.00
+		lineageTag: 517edfee-62f1-5206-a3b7-170fb06a1ca6
+		summarizeBy: sum
+		sourceColumn: price
+
+		annotation SummarizationSetBy = Automatic
+
+	column freight_value
+		dataType: decimal
+		formatString: \R\$ #,0.00
+		lineageTag: 1f57382e-63d2-5346-a74e-a7bd98ba524c
+		summarizeBy: sum
+		sourceColumn: freight_value
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_order_items = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "fact_order_items.csv"), [Delimiter = ",", Columns = 10, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(
+				        Promoted,
+				        {
+				            {"order_id", type text},
+				            {"order_item_id", Int64.Type},
+				            {"product_id", type text},
+				            {"seller_id", type text},
+				            {"customer_unique_id", type text},
+				            {"purchase_date", type date},
+				            {"order_status", type text},
+				            {"is_delivered", Int64.Type},
+				            {"price", Currency.Type},
+				            {"freight_value", Currency.Type}
+				        },
+				        "en-US"
+				    )
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

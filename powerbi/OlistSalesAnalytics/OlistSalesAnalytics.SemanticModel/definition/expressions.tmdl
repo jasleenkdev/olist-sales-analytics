@@ -1,0 +1,6 @@
+/// Folder holding the exported CSVs (powerbi/data/ in this repo). Must end with a slash.
+expression DataFolder = "C:\olist-sales-analytics\powerbi\data\" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
+	lineageTag: 4d0ee969-3300-5092-8e9f-c40b3c7fa3b7
+
+	annotation PBI_ResultType = Text
+

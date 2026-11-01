@@ -52,6 +52,23 @@ SELECT o.order_id,
             WHEN CAST(o.order_delivered_customer_date AS DATE)
                > CAST(o.order_estimated_delivery_date AS DATE) THEN 1
             ELSE 0 END                                                   AS is_late,
+       -- Text labels for report axes (same rules as is_late and Q5 buckets).
+       CASE WHEN o.order_status <> 'delivered'                  THEN 'Not delivered'
+            WHEN o.order_delivered_customer_date IS NULL         THEN 'Unknown'
+            WHEN CAST(o.order_delivered_customer_date AS DATE)
+               > CAST(o.order_estimated_delivery_date AS DATE)   THEN 'Late'
+            ELSE 'On time' END                                   AS delivery_status,
+       CASE WHEN o.order_status <> 'delivered'
+              OR o.order_delivered_customer_date IS NULL THEN NULL
+            WHEN CAST(o.order_delivered_customer_date AS DATE)
+               - CAST(o.order_estimated_delivery_date AS DATE) <= 0  THEN '1. On time or early'
+            WHEN CAST(o.order_delivered_customer_date AS DATE)
+               - CAST(o.order_estimated_delivery_date AS DATE) <= 3  THEN '2. 1-3 days late'
+            WHEN CAST(o.order_delivered_customer_date AS DATE)
+               - CAST(o.order_estimated_delivery_date AS DATE) <= 7  THEN '3. 4-7 days late'
+            WHEN CAST(o.order_delivered_customer_date AS DATE)
+               - CAST(o.order_estimated_delivery_date AS DATE) <= 14 THEN '4. 8-14 days late'
+            ELSE '5. 15+ days late' END                          AS lateness_bucket,
        COALESCE(i.item_count, 0)                                         AS item_count,
        COALESCE(i.order_revenue, 0)                                      AS order_revenue,
        COALESCE(i.order_freight, 0)                                      AS order_freight,

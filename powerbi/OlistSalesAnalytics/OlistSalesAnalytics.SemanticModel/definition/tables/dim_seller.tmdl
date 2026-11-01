@@ -1,0 +1,55 @@
+table dim_seller
+	lineageTag: f59adae0-7ceb-534b-873c-f955a8a77663
+
+	column seller_id
+		dataType: string
+		lineageTag: 52e3f3ef-d509-5ca8-b6b2-598680e4dd8b
+		summarizeBy: none
+		sourceColumn: seller_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column seller_city
+		dataType: string
+		lineageTag: d2062825-8843-5317-8d15-46cfd222049b
+		summarizeBy: none
+		sourceColumn: seller_city
+
+		annotation SummarizationSetBy = Automatic
+
+	column seller_state
+		dataType: string
+		lineageTag: 01cf39ec-e41d-55da-a7b7-0a00519171b2
+		summarizeBy: none
+		sourceColumn: seller_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column seller_zip_code_prefix
+		dataType: string
+		lineageTag: 8e8df437-40b6-5861-b537-d40b7a260abc
+		summarizeBy: none
+		sourceColumn: seller_zip_code_prefix
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_seller = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "dim_seller.csv"), [Delimiter = ",", Columns = 4, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(
+				        Promoted,
+				        {
+				            {"seller_id", type text},
+				            {"seller_city", type text},
+				            {"seller_state", type text},
+				            {"seller_zip_code_prefix", type text}
+				        },
+				        "en-US"
+				    )
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

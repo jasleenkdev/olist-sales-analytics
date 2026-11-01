@@ -1,0 +1,96 @@
+table dim_product
+	lineageTag: c3eb24b6-7ee6-56d6-8fdd-65f17bf5413b
+
+	column product_id
+		dataType: string
+		lineageTag: c4e5e40c-c214-5558-b9fb-2c2568cd8fa3
+		summarizeBy: none
+		sourceColumn: product_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_pt
+		dataType: string
+		lineageTag: 4fa3dfeb-d083-5976-8357-6d72874d1c04
+		summarizeBy: none
+		sourceColumn: category_pt
+
+		annotation SummarizationSetBy = Automatic
+
+	column category
+		dataType: string
+		lineageTag: b90bccab-e95a-57e0-9426-42708b04899f
+		summarizeBy: none
+		sourceColumn: category
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_photos_qty
+		dataType: int64
+		formatString: 0
+		lineageTag: 9e8b9e4d-cebb-5424-8799-6a2f7f40fe88
+		summarizeBy: none
+		sourceColumn: product_photos_qty
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_weight_g
+		dataType: int64
+		formatString: 0
+		lineageTag: e9507585-afc2-5150-aa16-f2ee14fba299
+		summarizeBy: none
+		sourceColumn: product_weight_g
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_length_cm
+		dataType: int64
+		formatString: 0
+		lineageTag: cbaecdff-25f7-542c-80e5-a3a291335ead
+		summarizeBy: none
+		sourceColumn: product_length_cm
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_height_cm
+		dataType: int64
+		formatString: 0
+		lineageTag: 54eb1466-f726-5da8-8134-c79769439a0e
+		summarizeBy: none
+		sourceColumn: product_height_cm
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_width_cm
+		dataType: int64
+		formatString: 0
+		lineageTag: 75cae690-e0af-58ee-964f-05b70957f07b
+		summarizeBy: none
+		sourceColumn: product_width_cm
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_product = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "dim_product.csv"), [Delimiter = ",", Columns = 8, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(
+				        Promoted,
+				        {
+				            {"product_id", type text},
+				            {"category_pt", type text},
+				            {"category", type text},
+				            {"product_photos_qty", Int64.Type},
+				            {"product_weight_g", Int64.Type},
+				            {"product_length_cm", Int64.Type},
+				            {"product_height_cm", Int64.Type},
+				            {"product_width_cm", Int64.Type}
+				        },
+				        "en-US"
+				    )
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

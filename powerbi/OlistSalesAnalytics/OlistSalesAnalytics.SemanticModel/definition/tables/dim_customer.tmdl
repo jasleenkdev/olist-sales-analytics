@@ -1,0 +1,158 @@
+table dim_customer
+	lineageTag: 8334f2eb-e742-5341-96b8-e70eda259954
+
+	column customer_unique_id
+		dataType: string
+		lineageTag: 292f6164-a6f5-5b3e-add4-7f5e5e59a282
+		summarizeBy: none
+		sourceColumn: customer_unique_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_city
+		dataType: string
+		lineageTag: 0c14b57c-02d1-5df4-aeea-ca80843c5241
+		summarizeBy: none
+		sourceColumn: customer_city
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_state
+		dataType: string
+		lineageTag: 9d1170ba-24a2-5442-95eb-fd31ce227da1
+		summarizeBy: none
+		sourceColumn: customer_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_zip_code_prefix
+		dataType: string
+		lineageTag: 09d6a1a2-f5a1-56e9-821d-25404cb5cc5c
+		summarizeBy: none
+		sourceColumn: customer_zip_code_prefix
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_order_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: a68eca3b-eb3c-5e68-9ad5-0d96104df3e7
+		summarizeBy: none
+		sourceColumn: first_order_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_order_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 21ff104a-cc9e-59f0-a067-4b95ec1831ae
+		summarizeBy: none
+		sourceColumn: last_order_date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column delivered_orders
+		dataType: int64
+		formatString: 0
+		lineageTag: cf8a772c-2b46-5ab6-b78f-262e514fe509
+		summarizeBy: none
+		sourceColumn: delivered_orders
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_repeat_customer
+		dataType: int64
+		formatString: 0
+		lineageTag: c82bd4a5-c911-5457-a96e-542154471c68
+		summarizeBy: none
+		sourceColumn: is_repeat_customer
+
+		annotation SummarizationSetBy = Automatic
+
+	column recency_days
+		dataType: int64
+		formatString: 0
+		lineageTag: 07a383b6-7474-556d-9a49-e7ec7298f62c
+		summarizeBy: none
+		sourceColumn: recency_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column lifetime_revenue
+		dataType: decimal
+		formatString: \R\$ #,0.00
+		lineageTag: baac3278-b8d8-571c-bf61-e415d01d836e
+		summarizeBy: sum
+		sourceColumn: lifetime_revenue
+
+		annotation SummarizationSetBy = Automatic
+
+	column r_score
+		dataType: int64
+		formatString: 0
+		lineageTag: c20e334c-2d84-5da2-9cbb-b9d1d56b8a44
+		summarizeBy: none
+		sourceColumn: r_score
+
+		annotation SummarizationSetBy = Automatic
+
+	column f_score
+		dataType: int64
+		formatString: 0
+		lineageTag: c79e007a-37ec-59f7-be2f-e9cc52a8347f
+		summarizeBy: none
+		sourceColumn: f_score
+
+		annotation SummarizationSetBy = Automatic
+
+	column m_score
+		dataType: int64
+		formatString: 0
+		lineageTag: 823de938-e14e-5ca9-ae9b-53167df79bd2
+		summarizeBy: none
+		sourceColumn: m_score
+
+		annotation SummarizationSetBy = Automatic
+
+	column rfm_segment
+		dataType: string
+		lineageTag: 11c28ed8-414f-56af-bc2b-cdaa633a7d45
+		summarizeBy: none
+		sourceColumn: rfm_segment
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_customer = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "dim_customer.csv"), [Delimiter = ",", Columns = 14, Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(
+				        Promoted,
+				        {
+				            {"customer_unique_id", type text},
+				            {"customer_city", type text},
+				            {"customer_state", type text},
+				            {"customer_zip_code_prefix", type text},
+				            {"first_order_date", type date},
+				            {"last_order_date", type date},
+				            {"delivered_orders", Int64.Type},
+				            {"is_repeat_customer", Int64.Type},
+				            {"recency_days", Int64.Type},
+				            {"lifetime_revenue", Currency.Type},
+				            {"r_score", Int64.Type},
+				            {"f_score", Int64.Type},
+				            {"m_score", Int64.Type},
+				            {"rfm_segment", type text}
+				        },
+				        "en-US"
+				    )
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
