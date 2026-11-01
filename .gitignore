@@ -1,0 +1,19 @@
+# Raw data and the local database are rebuilt by run_all.py
+data/raw/
+data/*.duckdb
+data/*.duckdb.wal
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Power BI Desktop local files
+powerbi/**/.pbi/localSettings.json
+powerbi/**/.pbi/cache.abf
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
