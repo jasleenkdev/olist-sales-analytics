@@ -1,0 +1,9 @@
+segment,customers,customer_share_pct,avg_recency_days,avg_frequency,avg_monetary,total_revenue,revenue_share_pct
+Promising,14479,15.51,92.2,1.0,267.11,3867446.58,29.25
+At Risk,13888,14.88,268.3,1.0,263.6,3660858.15,27.69
+Cannot Lose Them,6839,7.33,475.5,1.0,275.94,1887176.32,14.27
+About to Sleep,22292,23.88,268.6,1.0,55.82,1244288.67,9.41
+New Customers,21662,23.2,90.1,1.0,55.52,1202693.89,9.1
+Hibernating,11397,12.21,473.1,1.0,55.33,630625.75,4.77
+Loyal Customers,1600,1.71,319.7,2.08,252.03,403251.0,3.05
+Champions,1201,1.29,89.1,2.15,270.74,325157.75,2.46
