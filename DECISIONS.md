@@ -52,3 +52,13 @@ Choices made while building the project, with the reason for each.
 | 5.8 | Revenue and orders by month are separate charts, not a dual-axis combo | Two y-scales on one chart invite false comparisons. |
 | 5.9 | Report state slicing uses `dim_customer[customer_state]` (latest address) | Keeps one consistent customer state across pages. SQL Q5 uses the address on each order, so per-state figures can differ slightly for the few customers who moved. |
 | 5.10 | Currency format `\R\$ #,0` (escaped) | Avoids a quoted string at the start of a TMDL property value. |
+
+## Phase 6-8: charts, docs, automation
+
+| # | Decision | Why |
+|---|----------|-----|
+| 6.1 | Charts use matplotlib with one validated colour palette (blue = metric, orange = late / attention), shared with the Power BI theme | The PNGs and the dashboard look like one system. No dual-axis charts. |
+| 6.2 | Chart figures read `outputs/*.csv`, so the charts and README show the same numbers. Revenue by state is the one exception: it comes from the `powerbi/data` exports | No separate number path to drift. |
+| 7.1 | `scripts/verify_readme.py` recomputes every figure in "Key insights" and fails on any number it does not cover | Makes "every number matches the outputs" a test instead of a manual promise. Tested by planting a wrong and an unchecked number. |
+| 8.1 | Single entry point `run_all.py` (with `--clean`), not a Makefile | Works the same on macOS, Linux and Windows with only Python installed. |
+| 8.2 | Exports are sorted (`ORDER BY 1, 2`) | DuckDB scans in parallel, so unsorted exports changed row order on every run. Sorted output makes `python run_all.py --clean` byte-for-byte reproducible: after a clean rebuild, `git status` shows no changes. |
