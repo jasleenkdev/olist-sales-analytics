@@ -1,0 +1,9 @@
+table_name,column_name,null_count,total_rows
+order_reviews,review_comment_message,58247,99224
+order_reviews,review_comment_title,87656,99224
+orders,order_approved_at,160,99441
+orders,order_delivered_carrier_date,1783,99441
+orders,order_delivered_customer_date,2965,99441
+products,product_category_name,610,32951
+products,product_photos_qty,610,32951
+products,product_weight_g,2,32951

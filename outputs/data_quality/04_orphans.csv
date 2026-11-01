@@ -1,0 +1,7 @@
+check_name,issue_count
+orders with no order_items,775
+orders with no payment row,1
+orders with no review,768
+products never sold,0
+products whose category has no English translation,13
+customer zip prefixes not found in geolocation,278

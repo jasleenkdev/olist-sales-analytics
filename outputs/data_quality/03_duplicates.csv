@@ -1,0 +1,7 @@
+check_name,issue_count
+geolocation: exact duplicate rows (extra copies),261831
+order_reviews: review_id shared by more than one order,789
+order_reviews: orders with more than one review,547
+customers: customer_unique_id with several customer_id values,2997
+customers: distinct customer_id,99441
+customers: distinct customer_unique_id,96096

@@ -1,0 +1,6 @@
+check_name,issue_count
+order_items: price <= 0,0
+order_payments: payment_value = 0,9
+order_payments: installments = 0,2
+order_payments: payment_type not_defined,3
+products: weight_g = 0,4

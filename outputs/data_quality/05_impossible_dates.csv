@@ -1,0 +1,10 @@
+check_name,issue_count
+approved before purchase,0
+handed to carrier before purchase,166
+handed to carrier before approval,1359
+delivered to customer before carrier pickup,23
+delivered to customer before purchase,0
+estimated delivery before purchase,0
+status delivered but no delivery date,8
+delivery date present but status not delivered,6
+review answered before review created,0
