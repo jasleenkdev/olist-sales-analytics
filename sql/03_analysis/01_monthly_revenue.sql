@@ -84,3 +84,27 @@ SELECT CAST(order_year AS INTEGER)                              AS order_year,
              / LAG(orders) OVER (ORDER BY order_year), 2)       AS orders_yoy_pct
 FROM yearly
 ORDER BY order_year;
+
+
+-- @output: q1_peak_days
+-- Top 5 days by delivered orders, compared with the average day of their month.
+WITH daily AS (
+    SELECT CAST(order_purchase_timestamp AS DATE)                      AS order_date,
+           CAST(DATE_TRUNC('month', order_purchase_timestamp) AS DATE) AS order_month,
+           COUNT(*)                                                    AS orders
+    FROM orders
+    WHERE order_status = 'delivered'
+    GROUP BY 1, 2
+),
+with_month_avg AS (
+    SELECT order_date, orders,
+           AVG(orders) OVER (PARTITION BY order_month) AS month_avg_daily_orders
+    FROM daily
+)
+SELECT order_date,
+       orders,
+       ROUND(month_avg_daily_orders, 1)                 AS month_avg_daily_orders,
+       ROUND(orders / month_avg_daily_orders, 1)        AS times_month_average
+FROM with_month_avg
+ORDER BY orders DESC
+LIMIT 5;
